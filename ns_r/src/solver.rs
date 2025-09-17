@@ -74,6 +74,7 @@ pub fn find_phi_exit(
     Ok(phi_c)
 }
 
+// TODO: 前ステップの分割したときの値を使いきれていない。まだ最適化できる。
 pub fn simpson<F>(f: F, a: f64, b: f64, precision: f64) -> f64 
     where F: Fn(f64) -> f64 {
 
@@ -93,7 +94,7 @@ pub fn simpson<F>(f: F, a: f64, b: f64, precision: f64) -> f64
 
         last_result = current_result;
     }
-
+    println!("Simpson's rule did not converge within the given iterations.");
     last_result // 収束しなかった場合は最後の結果を返す
 }
 
@@ -117,6 +118,76 @@ fn simpson_internal<F>(f: &F, a: f64, b: f64, n: usize) -> f64
 }
 
 
+// AAA pattern (Arrange, Act, Assert)の順に従ってテストコードを組むとわかりやすい
+#[cfg(test)]
+mod tests {
+    use super::*; // 親モジュール（solver）のアイテムをすべてインポート
+    use crate::potential::{ChaoticPotential};
+
+    #[test]
+    fn test_find_phi_end_chaotic_potential_success() {
+        // --- 準備 (Arrange) ---
+        // テスト対象のポテンシャルと計算精度を設定
+        let potential = ChaoticPotential { m: 1.0, power: 2.0 };
+        let precision = 1.0e-6;
+        let expected_phi_end = 2.0_f64.sqrt();
+        // 解を十分に挟む探索範囲を設定
+        let search_range = (1.0, 2.0);
+
+        // --- 実行 (Act) ---
+        // テスト対象の関数を呼び出す
+        let result = find_phi_end(&potential, search_range, precision);
+
+        // --- 検証 (Assert) ---
+        // 実行結果が期待通りか検証する
+        // `unwrap()` は `Result` が `Ok` であることを期待し、中身を取り出す。
+        // もし `Err` ならテストはパニックして失敗する。
+        let actual_phi_end = result.unwrap();
+
+        // 浮動小数点数の比較では、完全一致 `==` ではなく、
+        // 差が微小な値（イプシロン）以下であるかをチェックするのが定石。
+        assert!((actual_phi_end - expected_phi_end).abs() < precision);
+    }
+
+    #[test]
+    fn test_find_phi_exit_chaotic_potential_success() {
+        // ----- Arange ----- 
+        let potential = ChaoticPotential { m: 1.0, power: 2.0 };
+        let precision = 1.0e-6;
+        let expected_efolds = 60.0;
+        let power = 2.0;
+        let phi_end = power / 2.0_f64;
+        let expected_phi_exit = (2.0 * power * expected_efolds + phi_end ).sqrt(); // これは解析的に導かれる
+
+        // ----- Act ----- 
+        let result = find_phi_exit(&potential, phi_end, expected_efolds, (1.0, 30.0), precision);
+        let actual_phi_exit = result.unwrap();
+
+        // ----- Assert -----
+        assert!((actual_phi_exit - expected_phi_exit).abs() < precision);
+
+    }
+
+    #[test]
+    fn test_simpson() {
+        // ----- Arange -----
+        // 被積分関数 f(x) = sin(x)
+        let f = |x: f64| x.sin();
+        let a = 0.0;
+        let b = 1.0;
+        let precision = 1.0e-9;
+
+        // ∫_0^1 sin(x) dx = -cos(1) - (-cos(0)) = 1 - cos(1)
+        let expected_answer = 1.0 - 1.0_f64.cos();
+
+        // ----- Act -----
+        let actual_answer = simpson(f, a, b, precision);
+
+        // ----- Assert -----
+        assert!((actual_answer - expected_answer).abs() < 1.0e-7);
+    }
+        
+}
 
 
 

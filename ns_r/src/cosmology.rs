@@ -19,3 +19,11 @@ pub fn epsilon(potential: &impl Potential, phi: f64) -> f64 {
 pub fn eta(potential: &impl Potential, phi: f64) -> f64 {
     M_P.powi(2) * potential.double_prime(phi) / potential.value(phi)
 }
+
+pub fn spectral_index(epsilon: f64, eta: f64) -> f64 {
+    1.0 - 6.0 * epsilon + 2.0 * eta
+}
+
+pub fn tensor_to_scalar_ratio(epsilon: f64) -> f64 {
+    16.0 * epsilon
+}
