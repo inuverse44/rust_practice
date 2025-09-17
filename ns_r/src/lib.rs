@@ -1,5 +1,3 @@
-pub mod math;
-
-pub fn greet(name: &str) {
-    println!("Hello, {name}!");
-}
+pub mod potential;
+pub mod cosmology;
+pub mod solver;

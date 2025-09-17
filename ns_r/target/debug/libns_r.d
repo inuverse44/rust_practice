@@ -1,1 +1,1 @@
-/Users/tatsukikodama/prac-rust/ns_r/target/debug/libns_r.rlib: /Users/tatsukikodama/prac-rust/ns_r/src/lib.rs /Users/tatsukikodama/prac-rust/ns_r/src/math.rs
+/Users/kodamaitsuki/Repository/rust_practice/ns_r/target/debug/libns_r.rlib: /Users/kodamaitsuki/Repository/rust_practice/ns_r/src/cosmology.rs /Users/kodamaitsuki/Repository/rust_practice/ns_r/src/lib.rs /Users/kodamaitsuki/Repository/rust_practice/ns_r/src/potential.rs /Users/kodamaitsuki/Repository/rust_practice/ns_r/src/solver.rs
